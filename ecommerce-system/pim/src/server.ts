@@ -1,6 +1,6 @@
 import app from './app';
-import { connectToDatabase } from './services/database';
-import { kafkaConsumer } from './services/kafka';
+import { connectToDatabase } from './utils/database';
+import { kafkaConsumer } from './utils/kafka';
 
 const PORT = process.env.PORT || 3001;
 
