@@ -8,14 +8,39 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: "pim-group" });
 
-export const kafkaProducer = async () => {
-  await producer.connect();
-  // Your producer code here
+export const kafkaProducer = {
+  connect: async () => {
+    await producer.connect();
+  },
+  send: async (payload: { topic: string; messages: Array<{ key: string; value: string }> }) => {
+    await producer.send(payload);
+  },
+  disconnect: async () => {
+    await producer.disconnect();
+  },
 };
 
-export const kafkaConsumer = async () => {
-  await consumer.connect();
-  // Your consumer code here
+export const kafkaConsumer = {
+  connect: async () => {
+    await consumer.connect();
+  },
+  subscribe: async (topic: string | RegExp) => {
+    await consumer.subscribe({ topic });
+  },
+  run: async () => {
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        console.log(`Received message on topic ${topic}, partition ${partition}: ${message.value}`);
+        // Process the received message here
+      },
+    });
+  },
+  disconnect: async () => {
+    await consumer.disconnect();
+  },
 };
+
+kafkaProducer.connect().catch((error) => console.error("Error connecting Kafka producer:", error));
+kafkaConsumer.connect().catch((error) => console.error("Error connecting Kafka consumer:", error));
 
 export default kafka;
