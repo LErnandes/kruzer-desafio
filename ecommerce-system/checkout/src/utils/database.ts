@@ -1,3 +1,4 @@
+import { CartStatus } from "../interfaces/ICart";
 import Product from "../models/product";
 import { kafkaProducer } from "./kafka";
 import mongoose from "mongoose";
@@ -23,6 +24,7 @@ const startChangeStreamListener = async () => {
     if (change.operationType === "insert" || change.operationType === "update") {
       if (change.ns.coll === "Cart") {
         const cart = change.fullDocument;
+        if (cart.status !== CartStatus.FINISHED) return;
         await kafkaProducer.send({
           topic: "cart-changes",
           messages: [

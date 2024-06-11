@@ -1,4 +1,8 @@
+import { OrderStatus } from "../interfaces/IOrder";
+import orderService from "../services/orderService";
+import { CartStatus } from "../interfaces/ICart";
 import { Kafka } from "kafkajs";
+import productService from "../services/productService";
 
 const kafka = new Kafka({
   clientId: "pim-service",
@@ -31,7 +35,22 @@ export const kafkaConsumer = {
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         console.log(`Received message on topic ${topic}, partition ${partition}: ${message.value}`);
-        // Process the received message here
+        if (topic === "cart-changes") {
+          const cart = JSON.parse(message.value!.toString());
+          if (cart.status === CartStatus.FINISHED) {
+            await orderService.addOrder({
+              status: OrderStatus.PENDING,
+              userId: cart.userId,
+              cartId: cart._id,
+              products: cart.products,
+            });
+          }
+        }
+
+        if (topic === "product-changes") {
+          const product = JSON.parse(message.value!.toString());
+          await productService.updateProduct(product.id, product.data);
+        }
       },
     });
   },

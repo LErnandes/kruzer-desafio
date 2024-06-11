@@ -1,4 +1,5 @@
 import { Kafka } from "kafkajs";
+import productService from "../services/productService";
 
 const kafka = new Kafka({
   clientId: "checkout-service",
@@ -31,8 +32,11 @@ export const kafkaConsumer = {
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         console.log(`Received message on topic ${topic}, partition ${partition}: ${message.value}`);
-        
-        
+
+        if (topic === "product-changes") {
+          const product = JSON.parse(message.value!.toString());
+          await productService.updateProduct(product.id, product.data);
+        }
       },
     });
   },

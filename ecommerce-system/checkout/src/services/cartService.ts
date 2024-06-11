@@ -1,5 +1,5 @@
 import cartRepository from "../repositories/cartRepository";
-import { AddToCartRequestParams, CreateNewCart, ICart, UpdateItemCartRequestParams } from "../interfaces/ICart";
+import { AddToCartRequestParams, CartStatus, CreateNewCart, ICart, UpdateItemCartRequestParams } from "../interfaces/ICart";
 
 class ProductService {
   async addToCart({
@@ -10,7 +10,8 @@ class ProductService {
     if (!cartId) {
       const newCart: CreateNewCart = {
         userId,
-        products: [product]
+        products: [product],
+        status: CartStatus.ACTIVE
       };
       return await cartRepository.createCart(newCart);
     } else {
@@ -23,21 +24,29 @@ class ProductService {
 
   async updateCartItem({
     cartId,
-    updatedProduct
+    updatedProduct,
+    status
   }: UpdateItemCartRequestParams): Promise<ICart | null> {
     const cart = await cartRepository.getCartById(cartId);
     if (!cart) {
       return null;
     }
 
-    const productIndex = cart.products.findIndex(
-      (product) => product.code === updatedProduct.code
-    );
-    if (productIndex === -1) {
-      return null;
+    if (updatedProduct) {
+      const productIndex = cart.products.findIndex(
+        (product) => product.code === updatedProduct.code
+      );
+      if (productIndex === -1) {
+        return null;
+      }
+
+      cart.products[productIndex] = updatedProduct;
     }
 
-    cart.products[productIndex] = updatedProduct;
+    if (status) {
+      cart.status = status;
+    }
+
     return await cartRepository.updateCart(cart);
   }
 

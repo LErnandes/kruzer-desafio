@@ -31,9 +31,9 @@ export const deleteCart = async (ctx: Context) => {
 
 export const updateCart = async (ctx: Context) => {
   const { id }: IdCartRequestPath = ctx.request.path as unknown as IdCartRequestPath;
-  const { updatedProduct }: UpdateItemCartRequestParams = ctx.request.body as UpdateItemCartRequestParams;
+  const { updatedProduct, status }: UpdateItemCartRequestParams = ctx.request.body as UpdateItemCartRequestParams;
 
-  const cart = await cartService.updateCartItem({ cartId: id, updatedProduct });
+  const cart = await cartService.updateCartItem({ cartId: id, updatedProduct, status });
 
   if (!cart) {
     ctx.status = 404;

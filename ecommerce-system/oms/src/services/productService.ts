@@ -1,5 +1,5 @@
 import productRepository from "../repositories/productRepository";
-import { AddProductRequestBody, UpdateProductRequestBody } from "../interfaces/IProduct";
+import { UpdateProductRequestBody } from "../interfaces/IProduct";
 
 class ProductService {
   async updateProduct(id: string, data: UpdateProductRequestBody) {
