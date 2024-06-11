@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export const connectToDatabase = async () => {
   try {
-    await mongoose.connect("", {
+    await mongoose.connect("mongodb://mongodb:27017/pim", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
