@@ -2,7 +2,7 @@ import app from './app';
 import { connectToDatabase } from './utils/database';
 import { startKafka } from './utils/kafka';
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 const startServer = async () => {
   await connectToDatabase();

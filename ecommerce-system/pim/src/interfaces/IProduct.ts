@@ -1,3 +1,11 @@
+import { Document } from "mongoose";
+
+export interface IProduct extends Document {
+    code: string;
+    name: string;
+    description: string;
+}
+
 export interface AddProductRequestBody {
     code: string;
     name: string;

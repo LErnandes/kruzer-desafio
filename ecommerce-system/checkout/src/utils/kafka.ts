@@ -1,12 +1,12 @@
 import { Kafka } from "kafkajs";
 
 const kafka = new Kafka({
-  clientId: "pim-service",
+  clientId: "checkout-service",
   brokers: ["kafka:9092"],
 });
 
 const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: "pim-group" });
+const consumer = kafka.consumer({ groupId: "checkout-group" });
 
 export const kafkaProducer = {
   connect: async () => {
@@ -31,7 +31,8 @@ export const kafkaConsumer = {
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         console.log(`Received message on topic ${topic}, partition ${partition}: ${message.value}`);
-        // Process the received message here
+        
+        
       },
     });
   },

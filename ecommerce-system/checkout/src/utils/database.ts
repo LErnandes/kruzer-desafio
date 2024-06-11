@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 export const connectToDatabase = async () => {
   try {
-    await mongoose.connect("mongodb://mongodb:27017/pim", {
+    await mongoose.connect("mongodb://mongodb:27017/checkout", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -21,14 +21,14 @@ const startChangeStreamListener = async () => {
 
   changeStream.on("change", async (change) => {
     if (change.operationType === "insert" || change.operationType === "update") {
-      if (change.ns.coll === "Product") {
-        const product = change.fullDocument;
+      if (change.ns.coll === "Cart") {
+        const cart = change.fullDocument;
         await kafkaProducer.send({
-          topic: "product-changes",
+          topic: "cart-changes",
           messages: [
             {
-              key: product._id.toString(),
-              value: JSON.stringify(product),
+              key: cart._id.toString(),
+              value: JSON.stringify(cart),
             },
           ],
         });

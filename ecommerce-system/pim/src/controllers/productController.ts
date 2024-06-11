@@ -5,6 +5,8 @@ import productService from "../services/productService";
 export const addProduct = async (ctx: Context) => {
   const { code, name, description }: AddProductRequestBody = ctx.request.body as AddProductRequestBody;
   const product = await productService.addProduct({ code, name, description });
+  
+  ctx.status = 201;
   ctx.body = product;
 };
 
@@ -12,5 +14,12 @@ export const updateProduct = async (ctx: Context) => {
   const { id }: UpdateProductRequestParams = ctx.params as UpdateProductRequestParams;
   const { code, name, description }: UpdateProductRequestBody = ctx.request.body as UpdateProductRequestBody;
   const product = await productService.updateProduct(id, { code, name, description });
+
+  if (!product) {
+    ctx.status = 404;
+    ctx.body = "Product not found";
+    return;
+  }
+
   ctx.body = product;
 };
